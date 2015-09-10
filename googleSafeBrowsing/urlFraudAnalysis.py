@@ -173,9 +173,10 @@ class Main():
     running_time = time.now()
     
     #inputfile = 'C:\\Users\\nancy\\Desktop\\opportunities_sample_small_test.txt'
-    targetFilePath = 'C:\\Users\\nancy\\Desktop\\opportunities_malwarelist.txt'
-    inputfile = 'C:\\Users\\nancy\\Desktop\\opportunities_sample.txt'
-    directory = 'C:/Users/nancy/Desktop/Data/backup_s3_opportunities/'
+    #inputfile = 'C:\\Users\\nancy\\Desktop\\opportunities_sample.txt'
+    targetFilePath = 'C:\\Users\\nancy\\Desktop\\opportunities_malwarelist_' + str(time.now()) +'.txt'
+    
+    directory = 'C:/Users/nancy/OneDrive/Data/backup_s3_opportunities/'
 
     data = extractURLs(readRawDataFromFiles(directory))
     
