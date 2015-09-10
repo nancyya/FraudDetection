@@ -12,20 +12,27 @@ from collections import defaultdict, Counter, Mapping, Iterable
 from safebrowsinglookup import SafebrowsinglookupClient
 global malwareDomains; malwareDomains = [];
 
-def readRawDataFromFile(filename):  
+def readRawDataFromFiles(directory):  
     ''' reads a file from S3 and returns a list of dictionaries (JSONs) after parsing''' 
     
-    with open(filename, "r") as data_file:
-        
-        for opportunity in data_file:
+    print "Read Data From Files... " + str(time.now())
+    
+    Files = os.listdir(directory)
+    
+    for filename in Files: 
+        with open(directory+filename, "r") as data_file:
             
-            opportunity = parseLine(opportunity)
-            
-            opportunitydict = convertToDictionary(opportunity)
-            
-            yield encodeDict(opportunitydict)['request']['properties']
+            for opportunity in data_file:
+                
+                opportunity = parseLine(opportunity)
+                
+                opportunitydict = convertToDictionary(opportunity)
+                
+                yield encodeDict(opportunitydict)['request']['properties']
     
 def extractURLs(oppData):
+    
+    print "Extract URLs... " + str(time.now())
     
     # Build a dictionary, for each exchange, the number of opportunities with each domain
     d = defaultdict(lambda: defaultdict(int))
@@ -65,6 +72,8 @@ def extractURLs(oppData):
     return d
 
 def getDistinctDomains(domains_dict):
+    
+    print "Get Distinct Domains... " + str(time.now())
     
     distinct_domains = {}
     
@@ -123,7 +132,9 @@ def getDomainFromRequestedSite(url):
     else: return '' 
 
 def writeToFile(filePath, text):
-    
+        
+        print "Write To File... " + str(time.now())
+        
         os.path.exists(filePath) and os.remove(filePath)
         target = open(filePath, 'a')
         
@@ -164,8 +175,9 @@ class Main():
     #inputfile = 'C:\\Users\\nancy\\Desktop\\opportunities_sample_small_test.txt'
     targetFilePath = 'C:\\Users\\nancy\\Desktop\\opportunities_malwarelist.txt'
     inputfile = 'C:\\Users\\nancy\\Desktop\\opportunities_sample.txt'
+    directory = 'C:/Users/nancy/Desktop/Data/backup_s3_opportunities/'
 
-    data = extractURLs(readRawDataFromFile(inputfile))
+    data = extractURLs(readRawDataFromFiles(directory))
     
     retrieveSafeBrowseringResutls(getDistinctDomains(data))
     
