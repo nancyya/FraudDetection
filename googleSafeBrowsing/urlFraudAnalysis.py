@@ -17,10 +17,15 @@ def readRawDataFromFiles(directory):
     
     print "Read Data From Files... " + str(time.now())
     
+    number_of_entries = 0
+    
     Files = os.listdir(directory)
     
     for filename in Files: 
+        
         with open(directory+filename, "r") as data_file:
+            
+            print ("Reading file " + str(filename) + "...")
             
             for opportunity in data_file:
                 
@@ -28,7 +33,14 @@ def readRawDataFromFiles(directory):
                 
                 opportunitydict = convertToDictionary(opportunity)
                 
-                yield encodeDict(opportunitydict)['request']['properties']
+                if (opportunitydict): 
+                    yield encodeDict(opportunitydict)['request']['properties']
+                else:
+                    continue
+            
+            number_of_entries += 1
+     
+    print "Number of opportunities read from file: %s" % str(number_of_entries) 
     
 def extractURLs(oppData):
     
@@ -92,8 +104,16 @@ def parseLine(line):
     return line.rstrip()[23:] 
 
 def convertToDictionary(str):
-    ''' convert (deserialize) a string to dictionary  using the built-in json module '''
-    return json.loads(str, encoding='ISO-8859-1')
+    ''' convert (deserialize) a string to dictionary using the built-in json module '''
+    try:
+        return json.loads(str, encoding='ISO-8859-1')
+    except ValueError, e:
+        print (">>Warning: ValueError exception - convert (deserialize) a string to dictionary using the built-in json module - failed")
+        print e
+        print ("Skip this request...")
+        return {}
+        
+        
 
 def encodeDict(data):
     '''  convert a dict's keys & values from unicode to str '''
@@ -176,7 +196,7 @@ class Main():
     #inputfile = 'C:\\Users\\nancy\\Desktop\\opportunities_sample.txt'
     targetFilePath = 'C:\\Users\\nancy\\Desktop\\opportunities_malwarelist_' + str(time.now()) +'.txt'
     
-    directory = 'C:/Users/nancy/OneDrive/Data/backup_s3_opportunities/'
+    directory = 'W:/RD/NancyFancy/backup_s3_opportunities/'
 
     data = extractURLs(readRawDataFromFiles(directory))
     
