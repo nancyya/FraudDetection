@@ -6,6 +6,7 @@ Created on Sep 10, 2015
 import re, os
 import ast
 import json
+import gzip
 from urlparse import urlparse #used to extract the URL domain
 from datetime import datetime as time
 from collections import defaultdict, Counter, Mapping, Iterable
@@ -23,7 +24,7 @@ def readRawDataFromFiles(directory):
     
     for filename in Files: 
         
-        with open(directory+filename, "r") as data_file:
+        with gzip.open(directory+filename, "rb") as data_file:
             
             print ("Reading file " + str(filename) + "...")
             
@@ -156,7 +157,7 @@ def writeToFile(filePath, text):
         print "Write To File... " + str(time.now())
         
         os.path.exists(filePath) and os.remove(filePath)
-        target = open(filePath, 'a')
+        target = open(filePath, 'w')
         
         target.write(str(text)) 
         target.close()
@@ -177,8 +178,9 @@ def retrieveSafeBrowseringResutls(domains):
         results = client.lookup(*domains.keys());
         
         for url in results:
-            if (results[url] != 'ok'):
-                print url + ',' + results[url]
+            print url + ',' + results[url]
+            #if (results[url] != 'ok'):
+                #print url + ',' + results[url]
             if (results[url] == "malware" or results[url] ==  "phishing" or results[url] ==  "malware,phishing"):
                 malwareDomains.append(url)
     
@@ -194,7 +196,7 @@ class Main():
     
     #inputfile = 'C:\\Users\\nancy\\Desktop\\opportunities_sample_small_test.txt'
     #inputfile = 'C:\\Users\\nancy\\Desktop\\opportunities_sample.txt'
-    targetFilePath = 'C:\\Users\\nancy\\Desktop\\opportunities_malwarelist_' + str(time.now()) +'.txt'
+    targetFilePath = 'C:/Users/nancy/Desktop/opportunities_malwarelist_' + str(time.now()) +'.txt'
     
     directory = 'W:/RD/NancyFancy/backup_s3_opportunities/'
 
